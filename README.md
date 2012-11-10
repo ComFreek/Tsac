@@ -13,7 +13,7 @@ Tsac delivers a litte GUI for adding TypeScript ability to Windows 8 HTML/JS app
 
     2. Type and run this command: `Set-ExecutionPolicy Unrestricted`.
 
-
+<br />
 2. Download/Update Tsac
 
     1. Download Tsac either via Git or as [ZIP](https://github.com/ComFreek/Tsac/archive/master.zip).
