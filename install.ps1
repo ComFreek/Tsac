@@ -54,14 +54,13 @@ function getTsacDir() {
     if (!!$x85Dir) {
         $x86Dir = ${env:ProgramFiles};
     }
-    return $x86Dir + "\Microsoft SDKs\TypeScript\0.8.0.0";
-}
 
+    # Find the latest version
+    $subDirs = Get-ChildItem -Path ($x86Dir + "\Microsoft SDKs\TypeScript\") -Directory;
+    $subDirs = $subDirs | Sort-Object;
 
-# Create Tsac directory hierarchy if it doesn't exist yet
-$tsacDir = getTsacDir;
-if (-NOT(Test-Path $tsacDir)) {
-    New-Item -Path $tsacDir -ItemType directory | Out-Null
+    # Get last entry in the sorted array
+    return ($x86Dir + "\Microsoft SDKs\TypeScript\" + $subDirs[$subDirs.Count - 1]);
 }
 
 $tmpDir = getTmpDir;
@@ -75,6 +74,7 @@ $cmd = 'git clone --quiet https://git01.codeplex.com/typescript "' + $tmpDir + '
 Invoke-Expression $cmd
 Remove-Item $tmpOutFile;
 
+$tsacDir = getTsacDir;
 Copy-Item ($tmpDir + "bin\winrt.d.ts") $tsacDir;
 Copy-Item ($tmpDir + "bin\winjs.d.ts") $tsacDir;
 
