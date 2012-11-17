@@ -55,7 +55,7 @@ function convProject($firstUse=$True) {
         $tsExecCmdAttr = $root.CreateAttribute("Command");
         #tsc$(TypeScriptSourceMap) @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')
         #$tsExecCmdAttr.InnerXml = "&quot;`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; -target ES5 `"`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\winrt.d.ts`" `"`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\winjs.d.ts`" @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')";
-        $tsExecCmdAttr.InnerXml = "tsc`$(TypeScriptSourceMap) -target ES5 @(TypeScriptCompile -&gt;'&quot;%(fullpath)&quot;', ' ')";
+        $tsExecCmdAttr.InnerXml = "tsc`$(TypeScriptSourceMap) -target ES5 `"`$(ProjectDir)\winjs.d.ts`" `"`$(ProjectDir)\winrt.d.ts`" @(TypeScriptCompile -&gt;'&quot;%(fullpath)&quot;', ' ')";
         $tsExec.SetAttributeNode($tsExecCmdAttr) | Out-Null;
         
         $tsExec.SetAttribute("IgnoreExitCode", "true");
@@ -106,4 +106,10 @@ function convProject($firstUse=$True) {
         $tscItemGroup2.InnerXml = '<TypeScriptCompile Include="$(ProjectDir)\**\*.ts" />';
         $project.AppendChild($tscItemGroup2) | Out-Null;
     }
+
+    # Copy winrt.d.ts and winjs.d.ts
+    Write-Host ($script:MyInvocation.MyCommand.Path);
+    $here = [IO.Path]::GetDirectoryName($script:MyInvocation.MyCommand.Path);
+    Copy-Item ($here + "\winjs.d.ts") ($projData.dir + "\winjs.d.ts");
+    Copy-Item ($here + "\winrt.d.ts") ($projData.dir + "\winrt.d.ts");
 }

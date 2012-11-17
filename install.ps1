@@ -48,35 +48,19 @@ function getTmpDir() {
     return $env:TMP + '\TypeScript\';
 }
 
-function getTsacDir() {
-    $x86Dir = ${env:ProgramFiles(x86)};
-    
-    if (!!$x85Dir) {
-        $x86Dir = ${env:ProgramFiles};
-    }
-
-    # Find the latest version
-    $subDirs = Get-ChildItem -Path ($x86Dir + "\Microsoft SDKs\TypeScript\") -Directory;
-    $subDirs = $subDirs | Sort-Object;
-
-    # Get last entry in the sorted array
-    return ($x86Dir + "\Microsoft SDKs\TypeScript\" + $subDirs[$subDirs.Count - 1]);
-}
-
 $tmpDir = getTmpDir;
 
 Read-Host "Ready for downloading the whole TypeScript Git archive? This can take several minutes! [Press enter]";
 
 # Don't show git checkout's progress (they're stated as errors by PowerShell)!
 $tmpOutFile = [System.IO.Path]::GetTempFileName();
-
 $cmd = 'git clone --quiet https://git01.codeplex.com/typescript "' + $tmpDir + '" > ' + $tmpOutFile;
-Invoke-Expression $cmd
+Invoke-Expression $cmd;
 Remove-Item $tmpOutFile;
 
-$tsacDir = getTsacDir;
-Copy-Item ($tmpDir + "bin\winrt.d.ts") $tsacDir;
-Copy-Item ($tmpDir + "bin\winjs.d.ts") $tsacDir;
+$tsacDir = [IO.Path]::GetDirectoryName($MyInvocation.MyCommand.Path);
+Copy-Item ($tmpDir + "\bin\winrt.d.ts") $tsacDir;
+Copy-Item ($tmpDir + "\bin\winjs.d.ts") $tsacDir;
 
 Remove-Item -Recurse -Force $tmpDir;
 
