@@ -19,7 +19,7 @@ Tsac delivers a litte GUI for adding TypeScript ability to Windows 8 HTML/JS app
     
     2. Execute *install.ps1* (via context menu). It's recommended that you start it via an already opened PowerShell console with administrator privileges!
        <br /><br />
-       The script will download the TypeScript Git repository and extract the declration files *winjs.d.ts* and *winrt.d.ts* into the official TypeScript VS extension folder.
+       The script will download the TypeScript Git repository and extract the declration files *winjs.d.ts* and *winrt.d.ts* into Tsac's root directory. These files will also be copied into your project's directory.
 
 ### Convert project
 
