@@ -35,7 +35,7 @@ function saveProject([string] $fileName) {
     $projData.xml.Save($fileName);
 }
 
-function convProject($firstUse=$True, $wrapCmd=$False) {
+function convProject($firstUse=$True) {
     $project = $projData.xml.Project;
     $root = $projData.xml;
 
@@ -47,13 +47,15 @@ function convProject($firstUse=$True, $wrapCmd=$False) {
 
     if ($firstUse) {
         $tsExec = $root.CreateElement("Exec");
+        $propGroup = $root.CreateElement("PropertyGroup");
+        $propGroup.InnerXml = @"
+  <TypeScriptSourceMap> --sourcemap</TypeScriptSourceMap>
+"@;
+        $project.AppendChild($propGroup);
         $tsExecCmdAttr = $root.CreateAttribute("Command");
-        if ($wrapCmd) {
-            $tsExecCmdAttr.InnerXml = "`powershell.exe -File &quot;`$(MSBuildProjectDirectory)\compile.ps1&quot; -target ES5 `"`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\winrt.d.ts`" `"`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\winjs.d.ts`" @(TypeScriptCompile ->'&quot;%(fullpath)', ' ')";
-        }
-        else {
-            $tsExecCmdAttr.InnerXml = "&quot;`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; -target ES5 `"`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\winrt.d.ts`" `"`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\winjs.d.ts`" @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')";
-        }
+        #tsc$(TypeScriptSourceMap) @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')
+        #$tsExecCmdAttr.InnerXml = "&quot;`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; -target ES5 `"`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\winrt.d.ts`" `"`$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\winjs.d.ts`" @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')";
+        $tsExecCmdAttr.InnerXml = "tsc`$(TypeScriptSourceMap) -target ES5 @(TypeScriptCompile -&gt;'&quot;%(fullpath)&quot;', ' ')";
         $tsExec.SetAttributeNode($tsExecCmdAttr) | Out-Null;
         
         $tsExec.SetAttribute("IgnoreExitCode", "true");
@@ -103,14 +105,5 @@ function convProject($firstUse=$True, $wrapCmd=$False) {
         $tscItemGroup2 = $root.CreateElement("ItemGroup");
         $tscItemGroup2.InnerXml = '<TypeScriptCompile Include="$(ProjectDir)\**\*.ts" />';
         $project.AppendChild($tscItemGroup2) | Out-Null;
-    }
-
-    if ($wrapCmd) {
-        $wrapperFile = @"
-Write-Host "Hello World!";
-cmd /c pause | out-null
-"@
-        $wrapperFile | Set-Content ($projData.dir + "\compile.ps1");
-        
     }
 }
