@@ -24,8 +24,8 @@ function loadProject([string] $fileName) {
         if (!$_.Node.DependentUpon) {
             $projData.jsFiles += $_.Node;
             $projData.activeJsFiles += $i;
+            $i++;
         }
-        $i++;
     } | Out-Null;
     return $projData;
 }
@@ -70,7 +70,6 @@ function convProject($firstUse=$True, $wrapCmd=$False) {
     }
 
     $items = $project.ItemGroup.childNodes;
-    Write-Host $projData.activeJsFiles;
     $projData.activeJsFiles | % {
         $node = $projData.jsFiles[$_];
 
