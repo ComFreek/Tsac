@@ -9,7 +9,7 @@ Tsac delivers a litte GUI for adding TypeScript ability to Windows 8 HTML/JS app
 ### Preparation (do this once)
 1. Setup PowerShell Execution Policy
  
-    1. Start PowerShell with administrator privileges. You can use Windows File Explorer: *File (menu) --> Open Windows PowerShell --> [...] as an administrator*.
+    1. Start PowerShell with administrator privileges. You can use Windows File Explorer: *File (menu) --> Open Windows PowerShell --> [...] as an administrator* if you're using Windows 8.
 
     2. Type and run this command: `Set-ExecutionPolicy Unrestricted`.
 <br />
